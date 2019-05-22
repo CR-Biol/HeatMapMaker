@@ -17,10 +17,10 @@ CSVs used here are derived from an Excel sheet.
 To generate a CSV file, go to "Data", "Export", "Change Type" and chose CSV.
 Nothing else should be contained in the excel sheet.
 
-Per default, the German Excel version is assumed. If another CSV type is used,
-change the SEPERATOR_IN_INPUT_CSV variable accordingly.
-Make sure that if you use a number notation where the decimal point is written 
-as a comma to not have conflicting cell delimiters! 
+Per default, the German Excel version is assumed. Costum variable values can be
+changed in the code base as neccessary.
+If you use a number notation where the decimal point is written as a comma make 
+sure that  to not have conflicting cell delimiters! 
 
 Christian Rauch
 05/2019.
@@ -41,8 +41,6 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-
-# sep in input csv
 
 
 class CSV:
@@ -93,12 +91,6 @@ class CSV:
         for row in self.rows:
             csv_as_str += str(row) + "\n"
         return csv_as_str
-
-
-    # def read_file(self, file):
-    #     with open(file) as csv_file:
-    #         for line in csv_file:
-    #             self.rows.append(line.strip().split(sep=self._sep))
 
 
     def to_df(self):
@@ -253,6 +245,7 @@ def make_heatmap(
         ax.set_aspect("equal") 
 
     if title is not None:
+        title += 3 * "\n" # Spacing between top axis label and title
         plt.title(title, fontweight = "bold", fontsize = 18)
 
     plt.tight_layout() 
@@ -361,7 +354,8 @@ class MainWindow(tk.Frame):
 
 class DrawGui:
     def __init__(self, parent):
-        parent.title(f"HeatMapMaker {__version__}")
+        self.parent = parent
+        self.parent.title(f"HeatMapMaker {__version__}")
         self.heatmap_title = tk.StringVar()
         self.min_value = tk.IntVar()
         self.max_value = tk.IntVar()
@@ -570,6 +564,8 @@ class DrawGui:
             title = "Select CSV file",
             filetypes = (("CSV files", "*.csv"), ("all files", "*.*"))
             )
+        if not csv_file: # Filedialogbox has been canceled
+            return
         csv = CSV(csv_file, seperator=self.seperator_in_input_csv.get())
         self.dataframe = csv.to_df()
         self.notification_csv.set(f"Current active data CSV: {os.path.basename(csv_file)}")
@@ -591,6 +587,12 @@ class DrawGui:
             defaultextension = ".png",
             filetypes = [('PNG files', '.png'), ('all files', '.*')]
             )
+
+        if not save_to: # Filedialogbox has been canceled
+            return
+        else:
+            self.notification_heatmap.set("Starting to create heatmap...")
+
         has_made_heatmap = make_heatmap(
             dataframe = self.dataframe,
             title = self.heatmap_title.get(), 
@@ -604,13 +606,12 @@ class DrawGui:
             )
 
         if has_made_heatmap:
-            self.notification_heatmap.set(f"Created heatmap2 '{self.heatmap_title.get()}'")
+            self.notification_heatmap.set(f"Created heatmap '{self.heatmap_title.get()}'")
         else:
             self.notification_heatmap.set(
                 "Could not make heatmap." 
                 + " Check if a CSV file has been read!"
                 )
-
 
     def help(self, parent, about):
         """Opens a help window about a topic."""
