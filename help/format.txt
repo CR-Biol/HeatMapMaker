@@ -1,0 +1,18 @@
+Input format for the HeatMapMaker are Excel generated CSV files (flat text files where each
+cell is seperated by a ";" symbol). The arrangement on the data sheet reflects the arrangement
+on the generated heatmap.
+
+The HeatMapMaker requires data naming. The input data sheet should look like this:
+
+
+	opt.		first		second		third		...
+	first		data		data		data		...
+	second		data		data		data		...
+	third		data		data		data		...
+	...	
+
+where first to third are meaningful data descriptions and data are numerical data.
+opt. is an optional character which may be present but is ignored in the program.
+
+
+See example_csv.csv for comparison. There are no limitations to the size of your data. :) (I hope)
