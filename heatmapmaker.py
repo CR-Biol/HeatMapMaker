@@ -26,9 +26,13 @@ Christian Rauch
 05/2019.
 """
 
-__version__ = "1.0"
+__version__ = "1.0.1"
 __author__ = "Christian Rauch"
 
+if __name__ == "__main__":
+    print(f"\nWelcome to HeatMap Maker v{__version__}!\n")
+    print("Importing system modules...")
+    
 import sys
 import os
 import tkinter as tk
@@ -36,13 +40,20 @@ import tkinter.filedialog
 import tkinter.font as tkFont
 from tkinter import ttk
 
+if __name__ == "__main__":
+    print("Done.")
+
+    print("Importing plotting modules...")
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
 
+if __name__ == "__main__":
+    print("Done.")
 
-
+    print("Loading graphical interface...")
+    
 class CSV:
     """Object containing information stored in plain text CSV file.
     Initializes by reading the file specified with the string path_to_csv_file.
@@ -252,42 +263,6 @@ def make_heatmap(
     plt.savefig(filename, dpi = dpi)
     plt.close(title)
     return True
-
-
-class EntryWithPlaceholder(tk.Entry):
-    """Class written by Stackoverflow user Nae.
-    https://stackoverflow.com/questions/27820178/how-to-add-placeholder-to-an-entry-in-tkinter
-    """
-    def __init__(
-        self, 
-        master=None, 
-        placeholder="default", 
-        textvariable=None, 
-        color='grey'
-        ):
-        super().__init__(master, textvariable=textvariable)
-
-        self.placeholder = placeholder
-        self.placeholder_color = color
-        self.default_fg_color = self['fg']
-
-        self.bind("<FocusIn>", self.foc_in)
-        self.bind("<FocusOut>", self.foc_out)
-
-        self.put_placeholder()
-
-    def put_placeholder(self):
-        self.insert(0, self.placeholder)
-        self['fg'] = self.placeholder_color
-
-    def foc_in(self, *args):
-        if self['fg'] == self.placeholder_color:
-            self.delete('0', 'end')
-            self['fg'] = self.default_fg_color
-
-    def foc_out(self, *args):
-        if not self.get():
-            self.put_placeholder()
 
 
 class MainWindow(tk.Frame):
@@ -626,8 +601,8 @@ class DrawGui:
             for line in file:
                 msg += line
         window = tk.Toplevel(parent)
-        help_text = tk.Label(window, text=msg, justify=tk.LEFT).pack(padx=5, pady=5)
-        ok_button = tk.Button(window, text="OK", command=close).pack(pady=5)
+        dummy_help_text = tk.Label(window, text=msg, justify=tk.LEFT).pack(padx=5, pady=5)
+        dummy_ok_button = tk.Button(window, text="OK", command=close).pack(pady=5)
         return
 
 
@@ -700,7 +675,44 @@ class DrawGui:
         parent.config(menu = menubar)
 
 
+class EntryWithPlaceholder(tk.Entry):
+    """Class written by Stackoverflow user Nae.
+    https://stackoverflow.com/questions/27820178/how-to-add-placeholder-to-an-entry-in-tkinter
+    """
+    def __init__(
+        self, 
+        master=None, 
+        placeholder="default", 
+        textvariable=None, 
+        color='grey'
+        ):
+        super().__init__(master, textvariable=textvariable)
+
+        self.placeholder = placeholder
+        self.placeholder_color = color
+        self.default_fg_color = self['fg']
+
+        self.bind("<FocusIn>", self.foc_in)
+        self.bind("<FocusOut>", self.foc_out)
+
+        self.put_placeholder()
+
+    def put_placeholder(self):
+        self.insert(0, self.placeholder)
+        self['fg'] = self.placeholder_color
+
+    def foc_in(self, *args):
+        if self['fg'] == self.placeholder_color:
+            self.delete('0', 'end')
+            self['fg'] = self.default_fg_color
+
+    def foc_out(self, *args):
+        if not self.get():
+            self.put_placeholder()
+
+
 if __name__ == "__main__":
+    print("Done.")
     root = tk.Tk() 
     DrawGui(root)
     root.mainloop()
